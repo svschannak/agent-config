@@ -32,9 +32,10 @@ Then group the tickets into **lanes**:
 - Tickets that touch different areas go into different lanes. Lanes run in parallel.
 - Dependencies across lanes are not allowed: merge the two lanes into one instead.
 - When in doubt whether two tickets conflict, put them in the same lane. A serial lane costs time; a conflicting merge costs correctness.
+- **Model per lane:** take the highest `complexity` of the lane's tickets and map it: `S` → `haiku`, `M` → `sonnet`, `L` → `opus`. Use `haiku` only when every ticket in the lane is `S` and none touches logic, data or a shared hotspot; otherwise use at least `sonnet`. Tickets without `complexity` count as unknown: the lane gets no model override and the worker runs on your own model.
 - Name each lane with a short slug of its theme (`filter-pills`, `ai-training`, …). Branches will be `svan/<lane>`.
 
-Present the schedule to the user as a table: lane, tickets in order, why they are grouped, and which batch they run in given the parallel limit. This is informational — do not wait for an answer. With `--dry-run`, stop here.
+Present the schedule to the user as a table: lane, tickets in order, why they are grouped, the model, and which batch they run in given the parallel limit. This is informational — do not wait for an answer. With `--dry-run`, stop here.
 
 ## 3. Start a lane
 
@@ -42,7 +43,7 @@ Do this for every lane of the first batch, then launch all their workers in a si
 
 1. **Claim** all tickets of the lane: `scripts/claim_task.py <file> …` from the main directory moves them to `.tasks/doing/`. If `.tasks` is tracked, commit the claim on the current branch (`git add .tasks && git commit -m "svan-monkey-family: claim <numbers>"`) so the worktree sees the tickets in `doing`.
 2. **Worktree:** `git worktree add .worktrees/<lane> -b svan/<lane>` from the current HEAD, so later lanes include the merged results of earlier ones. Make sure `.worktrees/` is ignored (`.gitignore` or `.git/info/exclude`). If the project needs an install step for a fresh checkout (`node_modules`, virtualenv, …), run it in the worktree before starting the worker.
-3. **Worker:** read `WORKER.md`, fill in the placeholders and spawn a general-purpose agent with the full brief as its prompt. Placeholders: `WORKTREE` (absolute path), `BRANCH`, `TICKETS` (ordered list of ticket paths — inside the worktree under `.tasks/doing/` when `.tasks` is tracked, otherwise the absolute paths in the main checkout), `TICKET_LOCATION` (one sentence saying which of the two it is), `CHECKS` (the commands from step 1), `NOTES` (anything a worker must know: install steps, hotspots other lanes touch, pre-existing test failures). Never shorten the brief — it is all the worker gets.
+3. **Worker:** read `WORKER.md`, fill in the placeholders and spawn a general-purpose agent with the full brief as its prompt, passing the lane's model from step 2 as the Agent tool's `model` parameter (omit it when the lane has no override). Placeholders: `WORKTREE` (absolute path), `BRANCH`, `TICKETS` (ordered list of ticket paths — inside the worktree under `.tasks/doing/` when `.tasks` is tracked, otherwise the absolute paths in the main checkout), `TICKET_LOCATION` (one sentence saying which of the two it is), `CHECKS` (the commands from step 1), `NOTES` (anything a worker must know: install steps, hotspots other lanes touch, pre-existing test failures). Never shorten the brief — it is all the worker gets.
 
 ## 4. Supervise and merge
 
@@ -63,7 +64,7 @@ Continue until every lane is merged or reported. Do not push.
 
 Final report in the language the tickets are written in (usually German), as a recap, not a log:
 
-1. **Per ticket** one line: number, title, result (done / blocked / skipped / unmerged), lane.
+1. **Per ticket** one line: number, title, result (done / blocked / skipped / unmerged), lane, model. Mention tickets the workers found clearly harder or easier than their `complexity`.
 2. **Decisions made on the user's behalf** that they will most likely want to review — the workers' least certain ones, with a pointer to the `Decisions & Assumptions` section of each ticket.
 3. **Risks and manual test checklist**, aggregated across tickets.
 4. **Follow-ups** the workers suggested, as candidates for new tickets.

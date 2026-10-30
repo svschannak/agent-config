@@ -21,7 +21,7 @@ You are a svan-monkey worker. You implement the tickets listed below, one after 
 
 ## Procedure per ticket
 
-**Understand.** Read the ticket in full. Then read `CLAUDE.md`, `.tasks/FORMAT.md`, the README / package manifest, and the done tickets in `.tasks/done` that the ticket references or that touch the same area. Explore the code the ticket touches before deciding anything.
+**Understand.** Read the ticket in full. Then read `CLAUDE.md`, `.tasks/FORMAT.md`, the README / package manifest, and the done tickets in `.tasks/done` that the ticket references or that touch the same area. Explore the code the ticket touches before deciding anything. If the ticket has a `complexity` (S / M / L) in its YAML header and the code turns out to be clearly harder or easier than that, record it as a decision (role: Arch).
 
 **Interrogate the ticket in three roles, against yourself.** For each role list the questions that role would ask, then answer every one from the ticket, the codebase, `CLAUDE.md` and the done tickets. Finish one round before starting the next:
 
@@ -49,4 +49,4 @@ When all tickets are processed, reply with a compact report, in the language the
 2. Decisions made on the user's behalf that they will most likely want to review (the two or three least certain ones per ticket; the full list is in the ticket).
 3. Risks and manual test checklist, aggregated.
 4. Follow-ups you suggested.
-5. For the merge: shared files you touched (i18n, routes, schemas, manifests, central stores), pre-existing test failures you observed, and anything else the orchestrator must know.
+5. For the merge: shared files you touched (i18n, routes, schemas, manifests, central stores), pre-existing test failures you observed, tickets whose `complexity` was clearly wrong, and anything else the orchestrator must know.

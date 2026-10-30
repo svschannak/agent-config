@@ -13,6 +13,8 @@ Run `scripts/oldest_task.py` (resolve the path relative to this skill's director
 
 Read the claimed ticket in full. Then read what the project says about itself before forming any opinion: `CLAUDE.md`, `.tasks/FORMAT.md`, the README / package manifest (for the test, lint and typecheck commands), and the done tickets the ticket references or that touch the same area (`grep -l` over `.tasks/done`). Explore the code the ticket touches — modules, components, data model, existing patterns — so that your decisions below are grounded in the actual codebase, not in assumptions.
 
+Note the ticket's `complexity` (S / M / L) from the YAML header, if present. If the code turns out to be clearly harder or easier than that, record it as a decision under `## Decisions & Assumptions` (role: Arch) — it tells the user how well tickets are being sized.
+
 ## 3. Interrogate the ticket — three roles, against yourself
 
 Run the three survey rounds of svan-next, but you are both interviewer and interviewee. For each role, list the questions that role would ask about this ticket, then answer every one of them from the ticket, the codebase, `CLAUDE.md` and the done tickets. Run the rounds in this order and finish one before starting the next:
@@ -46,7 +48,7 @@ After the implementation run the project's test, lint and typecheck commands. Fi
 1. Update the YAML header of the ticket: `status: done`, `completed: YYYY-MM-DD`, `total_time` and `tokens_used` (approximate values are fine, e.g. `~35 min`, `~95k`). Add `## Outcome / Notes` with the result in two to five lines, including anything that was deliberately not done.
 2. Move the ticket to `.tasks/done/`.
 3. Commit on the current branch: stage only the files you touched plus the moved ticket file (never sweep in unrelated uncommitted changes). Message: `<ticket-number>: <title>` and a short body. Do not push.
-4. Report to the user in the language the ticket is written in (usually German): what was implemented, the decisions you made on their behalf (point to the section in the ticket and name the ones you are least sure about), the risks and the manual test checklist, and the follow-ups. Keep it a recap, not a log.
+4. Report to the user in the language the ticket is written in (usually German): what was implemented, the decisions you made on their behalf (point to the section in the ticket and name the ones you are least sure about), the risks and the manual test checklist, and the follow-ups. If the ticket's `complexity` and the model of this session do not match (S or M run on the most capable model, L run on a smaller one), say so in one line, so the user can switch with `/model` next time. Keep it a recap, not a log.
 
 ## Blocked
 
