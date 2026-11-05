@@ -47,7 +47,7 @@ After the implementation run the project's test, lint and typecheck commands. Fi
 
 1. Update the YAML header of the ticket: `status: done`, `completed: YYYY-MM-DD`, `total_time` and `tokens_used` (approximate values are fine, e.g. `~35 min`, `~95k`). Add `## Outcome / Notes` with the result in two to five lines, including anything that was deliberately not done.
 2. Move the ticket to `.tasks/done/`.
-3. Commit on the current branch: stage only the files you touched plus the moved ticket file (never sweep in unrelated uncommitted changes). Message: `<ticket-number>: <title>` and a short body. Do not push.
+3. Commit on the current branch: stage only the files you touched plus the moved ticket file (never sweep in unrelated uncommitted changes). Message: `<ticket-number>: <title>` and a short body. As the last line of the message, after a blank line, add the trailer `Svan-Ticket: <ticket-number>` — on every commit that belongs to a ticket, including blocked or partial work and later fixes; a commit serving several tickets gets `Svan-Ticket: 010, 011`. The svan viewer finds a ticket's code only through this trailer. Do not push.
 4. Report to the user in the language the ticket is written in (usually German): what was implemented, the decisions you made on their behalf (point to the section in the ticket and name the ones you are least sure about), the risks and the manual test checklist, and the follow-ups. If the ticket's `complexity` and the model of this session do not match (S or M run on the most capable model, L run on a smaller one), say so in one line, so the user can switch with `/model` next time. Keep it a recap, not a log.
 
 ## Blocked
